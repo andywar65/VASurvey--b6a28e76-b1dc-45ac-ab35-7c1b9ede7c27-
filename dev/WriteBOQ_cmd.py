@@ -21,20 +21,42 @@ def RunCommand( is_interactive ):
         for row in original:
             wall_dict[row["\xef\xbb\xbfDescription"]]={
                 "Style": row["Style"],
-                "Length": row["Length"],
+                "Length": float(row["Length"]),
                 "Area": float(row["Area"].split(" ")[0]),
                 "Volume": float(row["Volume"].split(" ")[0]),
             }
     csvfile.close()
+    wall_params = [
+        "Unit weight",
+        "Demolizione",
+        "Spicconatura",
+        "Raschiatura",
+        "Rimozione rivestimento",
+        "Scarriolatura",
+        "Tiro",
+        "Trasporto a discarica",
+        "Oneri di discarica",
+        "Ricostruzione",
+        "Intonacatura",
+        "Rasatura",
+        "Imprimitura",
+        "Tinteggiatura",
+        "Verniciatura",
+        "Rivestimento",
+    ]
     # get all objects in file
     objects = Rhino.RhinoDoc.ActiveDoc.Objects
     for obj in objects:
+        # filter walls
         if obj.IsNormal and va.IsWall(obj.Id):
-            volume = wall_dict[str(obj.Id)]["Volume"]
-            unit_w_id = va.GetObjectParameterId("Unit weight", obj.Id,1)
-            unit_w = va.GetParameterValue(unit_w_id, obj.Id)
-            if unit_w:
-                print(float(unit_w)*volume)
+            # add parameters to wall dictionary
+            for param in wall_params:
+                param_id = va.GetObjectParameterId(param, obj.Id,1)
+                value = va.GetParameterValue(param_id, obj.Id)
+                type = va.GetParameterType(param_id)
+                if value:
+                    wall_dict[str(obj.Id)][param] = value
+    print(wall_dict)
     return 0
   
 if __name__ == "__main__":
