@@ -56,7 +56,32 @@ def RunCommand( is_interactive ):
                 type = va.GetParameterType(param_id)
                 if value:
                     wall_dict[str(obj.Id)][param] = value
-    print(wall_dict)
+    # write BOQ dictionary
+    activities = {}
+    for id, values in wall_dict.items():
+        weight = 0
+        if "Unit weight" in values and "Volume" in values:
+            weight = values["Unit weight"] * values["Volume"]
+        if "Demolizione" in values:
+            activities["Demolizioni murarie"][values["Style"]] += values["Area"]
+        if "Scarriolatura" in values:
+            activities["Scarriolature"] += weight
+        if "Tiro" in values:
+            activities["Tiro in alto/calo in basso"] += weight
+        if "Trasporto a discarica" in values:
+            activities["Trasporto a discarica"] += weight
+        if "Oneri di discarica" in values:
+            activities["Oneri di discarica"] += weight
+    print(activities)
+    #Get the filename to create
+    filter = "CSV File (*.csv)|*.csv|*.txt|All Files (*.*)|*.*||"
+    filename = rs.SaveFileName("Save Bill of Quantities file as", filter)
+    if( filename==None ): return
+    with open(filename, "wb") as csvfile:
+        csvwriter = csv.writer(csvfile,  delimiter=',')
+        csvwriter.writerow(["Num", "Descrizione", "u.m.", "Qt.", "p.u.", "Importo"])
+        print("Bill of Quantities written sucessfully to file")
+    csvfile.close()
     return 0
   
 if __name__ == "__main__":
