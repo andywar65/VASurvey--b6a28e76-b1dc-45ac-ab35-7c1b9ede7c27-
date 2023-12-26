@@ -30,3 +30,6 @@ def RunCommand( is_interactive ):
         for p in parameters:
 			va.AddObjectParameter( w_style, p[0], p[1], p[2], p[3])
     return 0
+    
+if __name__ == "__main__":
+    RunCommand(True)
