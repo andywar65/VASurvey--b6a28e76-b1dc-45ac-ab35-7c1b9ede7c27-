@@ -70,13 +70,26 @@ def RunCommand( is_interactive ):
             else:
                 wall_demolition[values["Style"]] = values["Area"]
         if "Scarriolatura" in values:
-            activities["Scarriolature"] += weight
+            activities["Trasporti"] = True
+            if "Scarriolature" in activities:
+                activities["Scarriolature"] += weight
+            else:
+                activities["Scarriolature"] = weight
         if "Tiro" in values:
-            activities["Tiro in alto/calo in basso"] += weight
+            if "Tiri" in activities:
+                activities["Tiri"] += weight
+            else:
+                activities["Tiri"] = weight
         if "Trasporto a discarica" in values:
-            activities["Trasporto a discarica"] += weight
+            if "Trasporti a discarica" in activities:
+                activities["Trasporti a discarica"] += weight
+            else:
+                activities["Trasporti a discarica"] = weight
         if "Oneri di discarica" in values:
-            activities["Oneri di discarica"] += weight
+            if "Oneri di discarica" in activities:
+                activities["Oneri di discarica"] += weight
+            else:
+                activities["Oneri di discarica"] = weight
     print(activities)
     print(wall_demolition)
     #Get the filename to create
@@ -86,12 +99,22 @@ def RunCommand( is_interactive ):
     with open(filename, "wb") as csvfile:
         csvwriter = csv.writer(csvfile,  delimiter=',')
         csvwriter.writerow(["Num", "Descrizione", "u.m.", "Qt.", "p.u.", "Importo"])
-        if activities["Demolizioni"]:
-            csvwriter.writerow(["", "Demolizioni", "", "", "", ""])
+        if "Demolizioni" in activities:
+            csvwriter.writerow(["", "Demolizioni"])
         if wall_demolition:
-            csvwriter.writerow(["", "Demolizioni murarie", "", "", "", ""])
+            csvwriter.writerow(["", "Demolizioni murarie"])
         for wall, area in wall_demolition.items():
-            csvwriter.writerow(["", wall, "mq", area, "", ""])
+            csvwriter.writerow(["", wall, "mq", area])
+        if "Trasporti" in activities:
+            csvwriter.writerow(["", "Trasporti"])
+        if "Scarriolature" in activities:
+            csvwriter.writerow(["", "Scarriolature", "kg", activities["Scarriolature"]])
+        if "Tiri" in activities:
+            csvwriter.writerow(["", "Tiri in alto/cali in basso", "kg", activities["Tiri"]])
+        if "Trasporti a discarica" in activities:
+            csvwriter.writerow(["", "Trasporti a discarica", "kg", activities["Trasporti a discarica"]])
+        if "Oneri di discarica" in activities:
+            csvwriter.writerow(["", "Oneri di discarica", "kg", activities["Oneri di discarica"]])
         print("Bill of Quantities written sucessfully to file")
     csvfile.close()
     return 0
