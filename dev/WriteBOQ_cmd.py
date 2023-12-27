@@ -58,12 +58,17 @@ def RunCommand( is_interactive ):
                     wall_dict[str(obj.Id)][param] = value
     # write BOQ dictionary
     activities = {}
+    wall_demolition = {}
     for id, values in wall_dict.items():
         weight = 0
         if "Unit weight" in values and "Volume" in values:
             weight = values["Unit weight"] * values["Volume"]
         if "Demolizione" in values:
-            activities["Demolizioni murarie"][values["Style"]] += values["Area"]
+            activities["Demolizioni"] = True
+            if values["Style"] in wall_demolition:
+                wall_demolition[values["Style"]] += values["Area"]
+            else:
+                wall_demolition[values["Style"]] = values["Area"]
         if "Scarriolatura" in values:
             activities["Scarriolature"] += weight
         if "Tiro" in values:
@@ -73,6 +78,7 @@ def RunCommand( is_interactive ):
         if "Oneri di discarica" in values:
             activities["Oneri di discarica"] += weight
     print(activities)
+    print(wall_demolition)
     #Get the filename to create
     filter = "CSV File (*.csv)|*.csv|*.txt|All Files (*.*)|*.*||"
     filename = rs.SaveFileName("Save Bill of Quantities file as", filter)
@@ -80,6 +86,8 @@ def RunCommand( is_interactive ):
     with open(filename, "wb") as csvfile:
         csvwriter = csv.writer(csvfile,  delimiter=',')
         csvwriter.writerow(["Num", "Descrizione", "u.m.", "Qt.", "p.u.", "Importo"])
+        if activities["Demolizioni"]:
+            csvwriter.writerow(["", "Demolizioni", "", "", "", ""])
         print("Bill of Quantities written sucessfully to file")
     csvfile.close()
     return 0
