@@ -88,6 +88,10 @@ def RunCommand( is_interactive ):
         csvwriter.writerow(["Num", "Descrizione", "u.m.", "Qt.", "p.u.", "Importo"])
         if activities["Demolizioni"]:
             csvwriter.writerow(["", "Demolizioni", "", "", "", ""])
+        if wall_demolition:
+            csvwriter.writerow(["", "Demolizioni murarie", "", "", "", ""])
+        for wall, area in wall_demolition.items():
+            csvwriter.writerow(["", wall, "mq", area, "", ""])
         print("Bill of Quantities written sucessfully to file")
     csvfile.close()
     return 0
