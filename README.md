@@ -11,4 +11,4 @@ At the moment the plugin is not standing alone, it needs some VisualARQ tools to
 * `WriteBOQ` script picks up the CSV file generating a dictionary of all walls, then it loops through all wall objects in the document and adds parametric values to the dictionary. At the end of the process you will have a list of walls that looks like this: `[{"Wall-1":{"Style":"Wall style", "Length": length,...,"Parameter-1":value,...},{"Wall-2":{...}},...]`
 * The script goes on building the Bill of Quantities, it loops in the wall list and pairs "Construction work" parameters with proper wall geometry, adding up quantities wall by wall. Results are extracted into a CSV file.
 
-By now the plugin is limited to wall objects and only few construction works.
+By now the plugin is limited to wall objects with several construction works.

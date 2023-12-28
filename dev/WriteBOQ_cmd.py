@@ -117,7 +117,6 @@ def RunCommand( is_interactive ):
                 else:
                     activities[act[1]] = values["Area"] * values[act[0]]
     #Get the filename to create
-    filter = "CSV File (*.csv)|*.csv|*.txt|All Files (*.*)|*.*||"
     filename = rs.SaveFileName("Save Bill of Quantities file as", filter)
     if( filename==None ): return
     with open(filename, "wb") as csvfile:
