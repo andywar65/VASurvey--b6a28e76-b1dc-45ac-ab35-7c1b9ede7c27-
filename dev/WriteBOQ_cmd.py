@@ -60,6 +60,17 @@ def RunCommand( is_interactive ):
     activities = {}
     wall_demolition = {}
     wall_construction = {}
+    wall_demolition_activities = [
+        ("Spicconatura", "Spicconatura", "Spicconatura intonaco"),
+        ("Raschiatura", "Raschiatura", "Raschiatura tinta"),
+        ("Rimozione rivestimento", "Rimozione rivestimento", "Rimozione rivestimento"),
+    ]
+    transportation_activities = [
+        ("Scarriolatura", "Scarriolatura", "Scarriolatura nell'ambito del cantiere"),
+        ("Tiro", "Tiri", "Tiro in alto/calo in basso"),
+        ("Trasporto a discarica", "Trasporto a discarica", "Trasporto a discarica"),
+        ("Oneri di discarica", "Oneri di discarica", "Oneri di discarica"),
+    ]
     for id, values in wall_dict.items():
         weight = 0
         if "Unit weight" in values and "Volume" in values:
@@ -70,45 +81,20 @@ def RunCommand( is_interactive ):
                 wall_demolition[values["Style"]] += values["Area"]
             else:
                 wall_demolition[values["Style"]] = values["Area"]
-        if "Spicconatura" in values:
-            activities["Demolizioni"] = True
-            if "Spicconature" in activities:
-                activities["Spicconature"] += values["Area"] * values["Spicconatura"]
-            else:
-                activities["Spicconature"] = values["Area"] * values["Spicconatura"]
-        if "Raschiatura" in values:
-            activities["Demolizioni"] = True
-            if "Raschiature" in activities:
-                activities["Raschiature"] += values["Area"] * values["Raschiatura"]
-            else:
-                activities["Raschiature"] = values["Area"] * values["Raschiatura"]
-        if "Rimozione rivestimento" in values:
-            activities["Demolizioni"] = True
-            if "Rimozioni rivestimento" in activities:
-                activities["Rimozioni rivestimento"] += values["Area"] * values["Rimozione rivestimento"]
-            else:
-                activities["Rimozioni rivestimento"] = values["Area"] * values["Rimozione rivestimento"]
-        if "Scarriolatura" in values:
-            activities["Trasporti"] = True
-            if "Scarriolature" in activities:
-                activities["Scarriolature"] += weight
-            else:
-                activities["Scarriolature"] = weight
-        if "Tiro" in values:
-            if "Tiri" in activities:
-                activities["Tiri"] += weight
-            else:
-                activities["Tiri"] = weight
-        if "Trasporto a discarica" in values:
-            if "Trasporti a discarica" in activities:
-                activities["Trasporti a discarica"] += weight
-            else:
-                activities["Trasporti a discarica"] = weight
-        if "Oneri di discarica" in values:
-            if "Oneri di discarica" in activities:
-                activities["Oneri di discarica"] += weight
-            else:
-                activities["Oneri di discarica"] = weight
+        for act in wall_demolition_activities:
+            if act[0] in values:
+                activities["Demolizioni"] = True
+                if act[1] in activities:
+                    activities[act[1]] += values["Area"] * values[act[0]]
+                else:
+                    activities[act[1]] = values["Area"] * values[act[0]]
+        for act in transportation_activities:
+            if act[0] in values:
+                activities["Trasporti"] = True
+                if act[1] in activities:
+                    activities[act[1]] += weight
+                else:
+                    activities[act[1]] = weight
         if "Ricostruzione" in values:
             activities["Ricostruzioni"] = True
             if values["Style"] in wall_construction:
@@ -165,22 +151,14 @@ def RunCommand( is_interactive ):
             csvwriter.writerow(["", "Demolizioni murarie"])
         for wall, area in wall_demolition.items():
             csvwriter.writerow(["", wall, "mq", area])
-        if "Spicconature" in activities:
-            csvwriter.writerow(["", "Spicconature intonaco", "mq", activities["Spicconature"]])
-        if "Raschiature" in activities:
-            csvwriter.writerow(["", "Raschiature tinta", "mq", activities["Raschiature"]])
-        if "Rimozioni rivestimento" in activities:
-            csvwriter.writerow(["", "Rimozioni rivestimento", "mq", activities["Rimozioni rivestimento"]])
+        for act in wall_demolition_activities:
+            if act[1] in activities:
+                csvwriter.writerow(["", act[2], "mq", activities[act[1]]])
         if "Trasporti" in activities:
             csvwriter.writerow(["", "Trasporti"])
-        if "Scarriolature" in activities:
-            csvwriter.writerow(["", "Scarriolature", "kg", activities["Scarriolature"]])
-        if "Tiri" in activities:
-            csvwriter.writerow(["", "Tiri in alto/cali in basso", "kg", activities["Tiri"]])
-        if "Trasporti a discarica" in activities:
-            csvwriter.writerow(["", "Trasporti a discarica", "kg", activities["Trasporti a discarica"]])
-        if "Oneri di discarica" in activities:
-            csvwriter.writerow(["", "Oneri di discarica", "kg", activities["Oneri di discarica"]])
+        for act in transportation_activities:
+            if act[1] in activities:
+                csvwriter.writerow(["", act[2], "kg", activities[act[1]]])
         if "Ricostruzioni" in activities:
             csvwriter.writerow(["", "Ricostruzioni"])
         if wall_construction:
