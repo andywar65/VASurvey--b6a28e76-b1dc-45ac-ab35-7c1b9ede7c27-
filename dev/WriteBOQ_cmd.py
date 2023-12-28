@@ -71,6 +71,14 @@ def RunCommand( is_interactive ):
         ("Trasporto a discarica", "Trasporto a discarica", "Trasporto a discarica"),
         ("Oneri di discarica", "Oneri di discarica", "Oneri di discarica"),
     ]
+    wall_construction_activities = [
+        ("Intonacatura", "Intonacatura", "Intonacatura"),
+        ("Rasatura", "Rasatura", "Rasatura"),
+        ("Imprimitura", "Imprimitura", "Imprimitura"),
+        ("Tinteggiatura", "Tinteggiatura", "Tinteggiatura"),
+        ("Verniciatura", "Verniciatura", "Verniciatura"),
+        ("Rivestimento", "Rivestimento", "Rivestimento murario"),
+    ]
     for id, values in wall_dict.items():
         weight = 0
         if "Unit weight" in values and "Volume" in values:
@@ -101,43 +109,13 @@ def RunCommand( is_interactive ):
                 wall_construction[values["Style"]] += values["Area"]
             else:
                 wall_construction[values["Style"]] = values["Area"]
-        if "Intonacatura" in values:
-            activities["Ricostruzioni"] = True
-            if "Intonacature" in activities:
-                activities["Intonacature"] += values["Area"] * values["Intonacatura"]
-            else:
-                activities["Intonacature"] = values["Area"] * values["Intonacatura"]
-        if "Rasatura" in values:
-            activities["Ricostruzioni"] = True
-            if "Rasature" in activities:
-                activities["Rasature"] += values["Area"] * values["Rasatura"]
-            else:
-                activities["Rasature"] = values["Area"] * values["Rasatura"]
-        if "Imprimitura" in values:
-            activities["Ricostruzioni"] = True
-            if "Imprimiture" in activities:
-                activities["Imprimiture"] += values["Area"] * values["Imprimitura"]
-            else:
-                activities["Imprimiture"] = values["Area"] * values["Imprimitura"]
-        if "Tinteggiatura" in values:
-            activities["Ricostruzioni"] = True
-            if "Tinteggiature" in activities:
-                activities["Tinteggiature"] += values["Area"] * values["Tinteggiatura"]
-            else:
-                activities["Tinteggiature"] = values["Area"] * values["Tinteggiatura"]
-        if "Verniciatura" in values:
-            activities["Ricostruzioni"] = True
-            if "Verniciature" in activities:
-                activities["Verniciature"] += values["Area"] * values["Verniciatura"]
-            else:
-                activities["Verniciature"] = values["Area"] * values["Verniciatura"]
-        if "Rivestimento" in values:
-            activities["Ricostruzioni"] = True
-            if "Rivestimenti" in activities:
-                activities["Rivestimenti"] += values["Area"] * values["Rivestimento"]
-            else:
-                activities["Rivestimenti"] = values["Area"] * values["Rivestimento"]
-    print(activities)
+        for act in wall_construction_activities:
+            if act[0] in values:
+                activities["Ricostruzioni"] = True
+                if act[1] in activities:
+                    activities[act[1]] += values["Area"] * values[act[0]]
+                else:
+                    activities[act[1]] = values["Area"] * values[act[0]]
     #Get the filename to create
     filter = "CSV File (*.csv)|*.csv|*.txt|All Files (*.*)|*.*||"
     filename = rs.SaveFileName("Save Bill of Quantities file as", filter)
@@ -165,18 +143,9 @@ def RunCommand( is_interactive ):
             csvwriter.writerow(["", "Ricostruzioni murarie"])
         for wall, area in wall_construction.items():
             csvwriter.writerow(["", wall, "mq", area])
-        if "Intonacature" in activities:
-            csvwriter.writerow(["", "Intonacature", "mq", activities["Intonacature"]])
-        if "Rasature" in activities:
-            csvwriter.writerow(["", "Rasature", "mq", activities["Rasature"]])
-        if "Imprimiture" in activities:
-            csvwriter.writerow(["", "Imprimiture", "mq", activities["Imprimiture"]])
-        if "Tinteggiature" in activities:
-            csvwriter.writerow(["", "Tinteggiature", "mq", activities["Tinteggiature"]])
-        if "Verniciature" in activities:
-            csvwriter.writerow(["", "Verniciature", "mq", activities["Verniciature"]])
-        if "Rivestimenti" in activities:
-            csvwriter.writerow(["", "Rivestimenti murari", "mq", activities["Rivestimenti"]])
+        for act in wall_construction_activities:
+            if act[1] in activities:
+                csvwriter.writerow(["", act[2], "mq", activities[act[1]]])
         print("Bill of Quantities written sucessfully to file")
     csvfile.close()
     return 0
