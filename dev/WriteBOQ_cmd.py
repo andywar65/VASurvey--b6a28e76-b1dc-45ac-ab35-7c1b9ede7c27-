@@ -59,6 +59,7 @@ def RunCommand( is_interactive ):
     # write BOQ dictionary
     activities = {}
     wall_demolition = {}
+    wall_construction = {}
     for id, values in wall_dict.items():
         weight = 0
         if "Unit weight" in values and "Volume" in values:
@@ -69,6 +70,24 @@ def RunCommand( is_interactive ):
                 wall_demolition[values["Style"]] += values["Area"]
             else:
                 wall_demolition[values["Style"]] = values["Area"]
+        if "Spicconatura" in values:
+            activities["Demolizioni"] = True
+            if "Spicconature" in activities:
+                activities["Spicconature"] += values["Area"] * values["Spicconatura"]
+            else:
+                activities["Spicconature"] = values["Area"] * values["Spicconatura"]
+        if "Raschiatura" in values:
+            activities["Demolizioni"] = True
+            if "Raschiature" in activities:
+                activities["Raschiature"] += values["Area"] * values["Raschiatura"]
+            else:
+                activities["Raschiature"] = values["Area"] * values["Raschiatura"]
+        if "Rimozione rivestimento" in values:
+            activities["Demolizioni"] = True
+            if "Rimozioni rivestimento" in activities:
+                activities["Rimozioni rivestimento"] += values["Area"] * values["Rimozione rivestimento"]
+            else:
+                activities["Rimozioni rivestimento"] = values["Area"] * values["Rimozione rivestimento"]
         if "Scarriolatura" in values:
             activities["Trasporti"] = True
             if "Scarriolature" in activities:
@@ -90,8 +109,13 @@ def RunCommand( is_interactive ):
                 activities["Oneri di discarica"] += weight
             else:
                 activities["Oneri di discarica"] = weight
+        if "Ricostruzione" in values:
+            activities["Ricostruzioni"] = True
+            if values["Style"] in wall_construction:
+                wall_construction[values["Style"]] += values["Area"]
+            else:
+                wall_construction[values["Style"]] = values["Area"]
     print(activities)
-    print(wall_demolition)
     #Get the filename to create
     filter = "CSV File (*.csv)|*.csv|*.txt|All Files (*.*)|*.*||"
     filename = rs.SaveFileName("Save Bill of Quantities file as", filter)
@@ -105,6 +129,12 @@ def RunCommand( is_interactive ):
             csvwriter.writerow(["", "Demolizioni murarie"])
         for wall, area in wall_demolition.items():
             csvwriter.writerow(["", wall, "mq", area])
+        if "Spicconature" in activities:
+            csvwriter.writerow(["", "Spicconature intonaco", "mq", activities["Spicconature"]])
+        if "Raschiature" in activities:
+            csvwriter.writerow(["", "Raschiature tinta", "mq", activities["Raschiature"]])
+        if "Rimozioni rivestimento" in activities:
+            csvwriter.writerow(["", "Rimozioni rivestimento", "mq", activities["Rimozioni rivestimento"]])
         if "Trasporti" in activities:
             csvwriter.writerow(["", "Trasporti"])
         if "Scarriolature" in activities:
@@ -115,6 +145,10 @@ def RunCommand( is_interactive ):
             csvwriter.writerow(["", "Trasporti a discarica", "kg", activities["Trasporti a discarica"]])
         if "Oneri di discarica" in activities:
             csvwriter.writerow(["", "Oneri di discarica", "kg", activities["Oneri di discarica"]])
+        if "Ricostruzioni" in activities:
+            csvwriter.writerow(["", "Ricostruzioni"])
+        if wall_construction:
+            csvwriter.writerow(["", "Ricostruzioni murarie"])
         print("Bill of Quantities written sucessfully to file")
     csvfile.close()
     return 0
