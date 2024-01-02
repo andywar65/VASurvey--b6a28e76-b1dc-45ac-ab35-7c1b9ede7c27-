@@ -4,6 +4,12 @@ clr.AddReference("VisualARQ.Script")
 import VisualARQ.Script as va
 import Rhino
 import rhinoscriptsyntax as rs
+from .AddConstructionParameters_cmd import (
+    wall_parameters,
+    wall_demolition_parameters,
+    transportation_parameters,
+    wal_construction_parameters,
+)
 
 __commandname__ = "WriteBOQ"
 
@@ -26,32 +32,20 @@ def RunCommand( is_interactive ):
                 "Volume": float(row["Volume"].split(" ")[0]),
             }
     csvfile.close()
-    wall_params = [
-        "Unit weight",
-        "Demolizione",
-        "Spicconatura",
-        "Raschiatura",
-        "Rimozione rivestimento",
-        "Scarriolatura",
-        "Tiro",
-        "Trasporto a discarica",
-        "Oneri di discarica",
-        "Ricostruzione",
-        "Intonacatura",
-        "Rasatura",
-        "Imprimitura",
-        "Tinteggiatura",
-        "Verniciatura",
-        "Rivestimento",
-    ]
+    wall_params = (
+        physical_parameters + 
+        wall_demolition_parameters +
+        transportation_parameters +
+        wal_construction_parameters
+    )
     # get all objects in file
     objects = Rhino.RhinoDoc.ActiveDoc.Objects
     for obj in objects:
         # filter walls
         if obj.IsNormal and va.IsWall(obj.Id):
             # add parameters to wall dictionary
-            for param in wall_params:
-                param_id = va.GetObjectParameterId(param, obj.Id,1)
+            for param in wall_parameters:
+                param_id = va.GetObjectParameterId(param[0], obj.Id,1)
                 value = va.GetParameterValue(param_id, obj.Id)
                 type = va.GetParameterType(param_id)
                 if value:
@@ -60,6 +54,7 @@ def RunCommand( is_interactive ):
     activities = {}
     wall_demolition = {}
     wall_construction = {}
+    # TODO we have to build the activity lists from parameter lists
     wall_demolition_activities = [
         ("Spicconatura", "Spicconatura", "Spicconatura intonaco"),
         ("Raschiatura", "Raschiatura", "Raschiatura tinta"),
