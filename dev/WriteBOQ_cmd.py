@@ -4,11 +4,11 @@ clr.AddReference("VisualARQ.Script")
 import VisualARQ.Script as va
 import Rhino
 import rhinoscriptsyntax as rs
-from .AddConstructionParameters_cmd import (
-    wall_parameters,
+from AddConstructionParameters_cmd import (
+    physical_parameters,
     wall_demolition_parameters,
     transportation_parameters,
-    wal_construction_parameters,
+    wall_construction_parameters,
 )
 
 __commandname__ = "WriteBOQ"
@@ -36,7 +36,7 @@ def RunCommand( is_interactive ):
         physical_parameters + 
         wall_demolition_parameters +
         transportation_parameters +
-        wal_construction_parameters
+        wall_construction_parameters
     )
     # get all objects in file
     objects = Rhino.RhinoDoc.ActiveDoc.Objects
@@ -44,41 +44,35 @@ def RunCommand( is_interactive ):
         # filter walls
         if obj.IsNormal and va.IsWall(obj.Id):
             # add parameters to wall dictionary
-            for param in wall_parameters:
+            for param in wall_params:
                 param_id = va.GetObjectParameterId(param[0], obj.Id,1)
                 value = va.GetParameterValue(param_id, obj.Id)
                 type = va.GetParameterType(param_id)
                 if value:
-                    wall_dict[str(obj.Id)][param] = value
+                    wall_dict[str(obj.Id)][param[0]] = value
+    print(wall_dict)
     # write BOQ dictionary
+    # activity dictionaries
     activities = {}
     wall_demolition = {}
     wall_construction = {}
-    # TODO we have to build the activity lists from parameter lists
-    wall_demolition_activities = [
-        ("Spicconatura", "Spicconatura", "Spicconatura intonaco"),
-        ("Raschiatura", "Raschiatura", "Raschiatura tinta"),
-        ("Rimozione rivestimento", "Rimozione rivestimento", "Rimozione rivestimento"),
-    ]
-    transportation_activities = [
-        ("Scarriolatura", "Scarriolatura", "Scarriolatura nell'ambito del cantiere"),
-        ("Tiro", "Tiri", "Tiro in alto/calo in basso"),
-        ("Trasporto a discarica", "Trasporto a discarica", "Trasporto a discarica"),
-        ("Oneri di discarica", "Oneri di discarica", "Oneri di discarica"),
-    ]
-    wall_construction_activities = [
-        ("Intonacatura", "Intonacatura", "Intonacatura"),
-        ("Rasatura", "Rasatura", "Rasatura"),
-        ("Imprimitura", "Imprimitura", "Imprimitura"),
-        ("Tinteggiatura", "Tinteggiatura", "Tinteggiatura"),
-        ("Verniciatura", "Verniciatura", "Verniciatura"),
-        ("Rivestimento", "Rivestimento", "Rivestimento murario"),
-    ]
+    # activity lists
+    wall_demolition_activities = []
+    transportation_activities = []
+    wall_construction_activities = []
+    for p in wall_demolition_parameters:
+        wall_demolition_activities.append((p[0], p[0], p[3]))
+    for p in transportation_parameters:
+        transportation_activities.append((p[0], p[0], p[3]))
+    for p in wall_construction_parameters:
+        wall_construction_activities.append((p[0], p[0], p[3]))
+    # fill the activity dictionaries for walls
     for id, values in wall_dict.items():
         weight = 0
         if "Unit weight" in values and "Volume" in values:
             weight = values["Unit weight"] * values["Volume"]
-        if "Demolizione" in values:
+        # TODO this is hard coded, no good!
+        if "010-Demolizione" in values:
             activities["Demolizioni"] = True
             if values["Style"] in wall_demolition:
                 wall_demolition[values["Style"]] += values["Area"]
