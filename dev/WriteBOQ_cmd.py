@@ -61,30 +61,29 @@ def RunCommand( is_interactive ):
     transportation_activities = []
     wall_construction_activities = []
     for p in wall_demolition_parameters:
-        wall_demolition_activities.append((p[0], p[0], p[3]))
+        wall_demolition_activities.append((p[0], p[0], p[3], p[4]))
     for p in transportation_parameters:
         transportation_activities.append((p[0], p[0], p[3]))
     for p in wall_construction_parameters:
-        wall_construction_activities.append((p[0], p[0], p[3]))
+        wall_construction_activities.append((p[0], p[0], p[3], p[4]))
     # fill the activity dictionaries for walls
     for id, values in wall_dict.items():
         weight = 0
         if "Unit weight" in values and "Volume" in values:
             weight = values["Unit weight"] * values["Volume"]
-        # TODO this is hard coded, no good!
-        if "010-Demolizione" in values:
-            activities["Demolizioni"] = True
-            if values["Style"] in wall_demolition:
-                wall_demolition[values["Style"]] += values["Area"]
-            else:
-                wall_demolition[values["Style"]] = values["Area"]
         for act in wall_demolition_activities:
             if act[0] in values:
                 activities["Demolizioni"] = True
-                if act[1] in activities:
-                    activities[act[1]] += values["Area"] * values[act[0]]
+                if act[3]:
+                    if values["Style"] in wall_demolition:
+                        wall_demolition[values["Style"]] += values["Area"]
+                    else:
+                        wall_demolition[values["Style"]] = values["Area"]
                 else:
-                    activities[act[1]] = values["Area"] * values[act[0]]
+                    if act[1] in activities:
+                        activities[act[1]] += values["Area"] * values[act[0]]
+                    else:
+                        activities[act[1]] = values["Area"] * values[act[0]]
         for act in transportation_activities:
             if act[0] in values:
                 activities["Trasporti"] = True
@@ -92,19 +91,19 @@ def RunCommand( is_interactive ):
                     activities[act[1]] += weight
                 else:
                     activities[act[1]] = weight
-        if "Ricostruzione" in values:
-            activities["Ricostruzioni"] = True
-            if values["Style"] in wall_construction:
-                wall_construction[values["Style"]] += values["Area"]
-            else:
-                wall_construction[values["Style"]] = values["Area"]
         for act in wall_construction_activities:
             if act[0] in values:
                 activities["Ricostruzioni"] = True
-                if act[1] in activities:
-                    activities[act[1]] += values["Area"] * values[act[0]]
+                if act[3]:
+                    if values["Style"] in wall_construction:
+                        wall_construction[values["Style"]] += values["Area"]
+                    else:
+                        wall_construction[values["Style"]] = values["Area"]
                 else:
-                    activities[act[1]] = values["Area"] * values[act[0]]
+                    if act[1] in activities:
+                        activities[act[1]] += values["Area"] * values[act[0]]
+                    else:
+                        activities[act[1]] = values["Area"] * values[act[0]]
     #Get the filename to create
     filename = rs.SaveFileName("Save Bill of Quantities file as", filter)
     if( filename==None ): return
