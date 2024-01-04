@@ -8,10 +8,10 @@ physical_parameters = [
     ["Unit weight", va.ParameterType.Number, "Physical", "Unit weight of wall (kg/mc)"],
 ]
 wall_demolition_parameters = [
-    ["010-Demolizione", va.ParameterType.Boolean, "Demolizioni", "Demolizione totale muraria", True],
-    ["020-Spicconatura", va.ParameterType.Percentage, "Demolizioni", "Spicconatura dell'intonaco murario", False],
-    ["030-Raschiatura", va.ParameterType.Percentage, "Demolizioni", "Raschiatura della tinteggiatura muraria", False],
-    ["040-Rimozione rivestimento", va.ParameterType.Percentage, "Demolizioni", "Rimozione del rivestimento murario", False],
+    ["010-Demolizione", va.ParameterType.Boolean, "Demolizioni", "Demolizione totale muraria", "Style"],
+    ["020-Spicconatura", va.ParameterType.Percentage, "Demolizioni", "Spicconatura dell'intonaco murario", "Area"],
+    ["030-Raschiatura", va.ParameterType.Percentage, "Demolizioni", "Raschiatura della tinteggiatura muraria", "Area"],
+    ["040-Rimozione rivestimento", va.ParameterType.Percentage, "Demolizioni", "Rimozione del rivestimento murario", "Area"],
 ]
 transportation_parameters = [
     ["010-Scarriolatura", va.ParameterType.Boolean, "Trasporti", "Scarriolatura dei materiali demoliti"],
@@ -20,13 +20,13 @@ transportation_parameters = [
     ["040-Oneri di discarica", va.ParameterType.Boolean, "Trasporti", "Smaltimento in discarica dei materiali demoliti"],
 ]
 wall_construction_parameters = [
-    ["010-Ricostruzione", va.ParameterType.Boolean, "Ricostruzioni", "Costruzioni murarie", True],
-    ["020-Intonacatura", va.ParameterType.Percentage, "Ricostruzioni", "Intonacatura muraria", False],
-    ["030-Rasatura", va.ParameterType.Percentage, "Ricostruzioni", "Rasatura muraria", False],
-    ["040-Imprimitura", va.ParameterType.Percentage, "Ricostruzioni", "Imprimitura muraria con aggrappante", False],
-    ["050-Tinteggiatura", va.ParameterType.Percentage, "Ricostruzioni", "Tinteggiatura muraria con lavabile", False],
-    ["060-Verniciatura", va.ParameterType.Percentage, "Ricostruzioni", "Verniciatura muraria a smalto", False],
-    ["070-Rivestimento", va.ParameterType.Percentage, "Ricostruzioni", "Rivestimento murario", False],
+    ["010-Ricostruzione", va.ParameterType.Boolean, "Ricostruzioni", "Costruzioni murarie", "Style"],
+    ["020-Intonacatura", va.ParameterType.Percentage, "Ricostruzioni", "Intonacatura muraria", "Area"],
+    ["030-Rasatura", va.ParameterType.Percentage, "Ricostruzioni", "Rasatura muraria", "Area"],
+    ["040-Imprimitura", va.ParameterType.Percentage, "Ricostruzioni", "Imprimitura muraria con aggrappante", "Area"],
+    ["050-Tinteggiatura", va.ParameterType.Percentage, "Ricostruzioni", "Tinteggiatura muraria con lavabile", "Area"],
+    ["060-Verniciatura", va.ParameterType.Percentage, "Ricostruzioni", "Verniciatura muraria a smalto", "Area"],
+    ["070-Rivestimento", va.ParameterType.Percentage, "Ricostruzioni", "Rivestimento murario", "Area"],
 ]
 
 # RunCommand is the called when the user enters the command name in Rhino.

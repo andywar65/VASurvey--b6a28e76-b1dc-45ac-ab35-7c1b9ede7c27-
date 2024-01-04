@@ -74,7 +74,7 @@ def RunCommand( is_interactive ):
         for act in wall_demolition_activities:
             if act[0] in values:
                 activities["Demolizioni"] = True
-                if act[3]:
+                if act[3] == "Style":
                     if values["Style"] in wall_demolition:
                         wall_demolition[values["Style"]] += values["Area"]
                     else:
@@ -94,7 +94,7 @@ def RunCommand( is_interactive ):
         for act in wall_construction_activities:
             if act[0] in values:
                 activities["Ricostruzioni"] = True
-                if act[3]:
+                if act[3] == "Style":
                     if values["Style"] in wall_construction:
                         wall_construction[values["Style"]] += values["Area"]
                     else:
