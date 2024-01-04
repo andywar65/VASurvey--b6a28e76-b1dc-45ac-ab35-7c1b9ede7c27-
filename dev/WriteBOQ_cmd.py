@@ -61,11 +61,11 @@ def RunCommand( is_interactive ):
     transportation_activities = []
     wall_construction_activities = []
     for p in wall_demolition_parameters:
-        wall_demolition_activities.append((p[0], p[0], p[3], p[4]))
+        wall_demolition_activities.append((p[0], p[0], p[3], p[4], p[5]))
     for p in transportation_parameters:
         transportation_activities.append((p[0], p[0], p[3]))
     for p in wall_construction_parameters:
-        wall_construction_activities.append((p[0], p[0], p[3], p[4]))
+        wall_construction_activities.append((p[0], p[0], p[3], p[4], p[5]))
     # fill the activity dictionaries for walls
     for id, values in wall_dict.items():
         weight = 0
@@ -74,16 +74,17 @@ def RunCommand( is_interactive ):
         for act in wall_demolition_activities:
             if act[0] in values:
                 activities["Demolizioni"] = True
-                if act[3] == "Style":
+                # [3] selects style mode, [4] selects parameter
+                if act[3]:
                     if values["Style"] in wall_demolition:
-                        wall_demolition[values["Style"]] += values["Area"]
+                        wall_demolition[values["Style"]] += values[act[4]]
                     else:
-                        wall_demolition[values["Style"]] = values["Area"]
+                        wall_demolition[values["Style"]] = values[act[4]]
                 else:
                     if act[1] in activities:
-                        activities[act[1]] += values[act[3]] * values[act[0]]
+                        activities[act[1]] += values[act[4]] * values[act[0]]
                     else:
-                        activities[act[1]] = values[act[3]] * values[act[0]]
+                        activities[act[1]] = values[act[4]] * values[act[0]]
         for act in transportation_activities:
             if act[0] in values:
                 activities["Trasporti"] = True
@@ -94,16 +95,17 @@ def RunCommand( is_interactive ):
         for act in wall_construction_activities:
             if act[0] in values:
                 activities["Ricostruzioni"] = True
-                if act[3] == "Style":
+                # [3] selects style mode, [4] selects parameter
+                if act[3]:
                     if values["Style"] in wall_construction:
-                        wall_construction[values["Style"]] += values["Area"]
+                        wall_construction[values["Style"]] += values[act[4]]
                     else:
-                        wall_construction[values["Style"]] = values["Area"]
+                        wall_construction[values["Style"]] = values[act[4]]
                 else:
                     if act[1] in activities:
-                        activities[act[1]] += values[act[3]] * values[act[0]]
+                        activities[act[1]] += values[act[4]] * values[act[0]]
                     else:
-                        activities[act[1]] = values[act[3]] * values[act[0]]
+                        activities[act[1]] = values[act[4]] * values[act[0]]
     #Get the filename to create
     filename = rs.SaveFileName("Save Bill of Quantities file as", filter)
     if( filename==None ): return

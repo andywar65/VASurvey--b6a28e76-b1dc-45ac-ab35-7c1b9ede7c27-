@@ -4,15 +4,16 @@ import VisualARQ.Script as va
 
 __commandname__ = "AddConstructionParameters"
 
+# Name, Type, Category, Description, select style, measuring parameter
 physical_parameters = [
     ["Unit weight", va.ParameterType.Number, "Physical", "Unit weight of wall (kg/mc)"],
 ]
 wall_demolition_parameters = [
-    ["010-Demolizione", va.ParameterType.Boolean, "Demolizioni", "Demolizione totale muraria", "Style"],
-    ["020-Spicconatura", va.ParameterType.Percentage, "Demolizioni", "Spicconatura dell'intonaco murario", "Area"],
-    ["030-Raschiatura", va.ParameterType.Percentage, "Demolizioni", "Raschiatura della tinteggiatura muraria", "Area"],
-    ["040-Rimozione rivestimento", va.ParameterType.Percentage, "Demolizioni", "Rimozione del rivestimento murario", "Area"],
-    ["050-Rimozione battiscopa", va.ParameterType.Percentage, "Demolizioni", "Rimozione del battiscopa", "Length"],
+    ["010-Demolizione", va.ParameterType.Boolean, "Demolizioni", "Demolizione totale muraria", True, "Area"],
+    ["020-Spicconatura", va.ParameterType.Percentage, "Demolizioni", "Spicconatura dell'intonaco murario", False, "Area"],
+    ["030-Raschiatura", va.ParameterType.Percentage, "Demolizioni", "Raschiatura della tinteggiatura muraria", False, "Area"],
+    ["040-Rimozione rivestimento", va.ParameterType.Percentage, "Demolizioni", "Rimozione del rivestimento murario", False, "Area"],
+    ["050-Rimozione battiscopa", va.ParameterType.Percentage, "Demolizioni", "Rimozione del battiscopa", False, "Length"],
 ]
 transportation_parameters = [
     ["010-Scarriolatura", va.ParameterType.Boolean, "Trasporti", "Scarriolatura dei materiali demoliti"],
@@ -21,14 +22,14 @@ transportation_parameters = [
     ["040-Oneri di discarica", va.ParameterType.Boolean, "Trasporti", "Smaltimento in discarica dei materiali demoliti"],
 ]
 wall_construction_parameters = [
-    ["010-Ricostruzione", va.ParameterType.Boolean, "Ricostruzioni", "Costruzioni murarie", "Style"],
-    ["020-Intonacatura", va.ParameterType.Percentage, "Ricostruzioni", "Intonacatura muraria", "Area"],
-    ["030-Rasatura", va.ParameterType.Percentage, "Ricostruzioni", "Rasatura muraria", "Area"],
-    ["040-Imprimitura", va.ParameterType.Percentage, "Ricostruzioni", "Imprimitura muraria con aggrappante", "Area"],
-    ["050-Tinteggiatura", va.ParameterType.Percentage, "Ricostruzioni", "Tinteggiatura muraria con lavabile", "Area"],
-    ["060-Verniciatura", va.ParameterType.Percentage, "Ricostruzioni", "Verniciatura muraria a smalto", "Area"],
-    ["070-Rivestimento", va.ParameterType.Percentage, "Ricostruzioni", "Rivestimento murario", "Area"],
-    ["080-Battiscopa", va.ParameterType.Percentage, "Ricostruzioni", "Posa del battiscopa", "Length"],
+    ["010-Ricostruzione", va.ParameterType.Boolean, "Ricostruzioni", "Costruzioni murarie", True, "Area"],
+    ["020-Intonacatura", va.ParameterType.Percentage, "Ricostruzioni", "Intonacatura muraria", False, "Area"],
+    ["030-Rasatura", va.ParameterType.Percentage, "Ricostruzioni", "Rasatura muraria", False, "Area"],
+    ["040-Imprimitura", va.ParameterType.Percentage, "Ricostruzioni", "Imprimitura muraria con aggrappante", False, "Area"],
+    ["050-Tinteggiatura", va.ParameterType.Percentage, "Ricostruzioni", "Tinteggiatura muraria con lavabile", False, "Area"],
+    ["060-Verniciatura", va.ParameterType.Percentage, "Ricostruzioni", "Verniciatura muraria a smalto", False, "Area"],
+    ["070-Rivestimento", va.ParameterType.Percentage, "Ricostruzioni", "Rivestimento murario", False, "Area"],
+    ["080-Battiscopa", va.ParameterType.Percentage, "Ricostruzioni", "Posa del battiscopa", False, "Length"],
 ]
 
 # RunCommand is the called when the user enters the command name in Rhino.
