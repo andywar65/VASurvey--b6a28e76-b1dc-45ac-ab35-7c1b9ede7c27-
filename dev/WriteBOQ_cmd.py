@@ -81,9 +81,9 @@ def RunCommand( is_interactive ):
                         wall_demolition[values["Style"]] = values["Area"]
                 else:
                     if act[1] in activities:
-                        activities[act[1]] += values["Area"] * values[act[0]]
+                        activities[act[1]] += values[act[3]] * values[act[0]]
                     else:
-                        activities[act[1]] = values["Area"] * values[act[0]]
+                        activities[act[1]] = values[act[3]] * values[act[0]]
         for act in transportation_activities:
             if act[0] in values:
                 activities["Trasporti"] = True
@@ -101,9 +101,9 @@ def RunCommand( is_interactive ):
                         wall_construction[values["Style"]] = values["Area"]
                 else:
                     if act[1] in activities:
-                        activities[act[1]] += values["Area"] * values[act[0]]
+                        activities[act[1]] += values[act[3]] * values[act[0]]
                     else:
-                        activities[act[1]] = values["Area"] * values[act[0]]
+                        activities[act[1]] = values[act[3]] * values[act[0]]
     #Get the filename to create
     filename = rs.SaveFileName("Save Bill of Quantities file as", filter)
     if( filename==None ): return
