@@ -12,6 +12,7 @@ wall_demolition_parameters = [
     ["020-Spicconatura", va.ParameterType.Percentage, "Demolizioni", "Spicconatura dell'intonaco murario", "Area"],
     ["030-Raschiatura", va.ParameterType.Percentage, "Demolizioni", "Raschiatura della tinteggiatura muraria", "Area"],
     ["040-Rimozione rivestimento", va.ParameterType.Percentage, "Demolizioni", "Rimozione del rivestimento murario", "Area"],
+    ["050-Rimozione battiscopa", va.ParameterType.Percentage, "Demolizioni", "Rimozione del battiscopa", "Length"],
 ]
 transportation_parameters = [
     ["010-Scarriolatura", va.ParameterType.Boolean, "Trasporti", "Scarriolatura dei materiali demoliti"],
@@ -27,6 +28,7 @@ wall_construction_parameters = [
     ["050-Tinteggiatura", va.ParameterType.Percentage, "Ricostruzioni", "Tinteggiatura muraria con lavabile", "Area"],
     ["060-Verniciatura", va.ParameterType.Percentage, "Ricostruzioni", "Verniciatura muraria a smalto", "Area"],
     ["070-Rivestimento", va.ParameterType.Percentage, "Ricostruzioni", "Rivestimento murario", "Area"],
+    ["080-Battiscopa", va.ParameterType.Percentage, "Ricostruzioni", "Posa del battiscopa", "Length"],
 ]
 
 # RunCommand is the called when the user enters the command name in Rhino.
