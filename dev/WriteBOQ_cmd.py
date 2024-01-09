@@ -88,16 +88,24 @@ def RunCommand( is_interactive ):
     activities = {}
     wall_demolition = {}
     wall_construction = {}
+    slab_demolition = {}
+    slab_construction = {}
     # activity lists
     wall_demolition_activities = []
     transportation_activities = []
     wall_construction_activities = []
+    slab_demolition_activities = []
+    slab_construction_activities = []
     for p in wall_demolition_parameters:
         wall_demolition_activities.append((p[0], p[0], p[3], p[4], p[5]))
     for p in transportation_parameters:
         transportation_activities.append((p[0], p[0], p[3]))
     for p in wall_construction_parameters:
         wall_construction_activities.append((p[0], p[0], p[3], p[4], p[5]))
+    for p in slab_demolition_parameters:
+        slab_demolition_activities.append((p[0], p[0], p[3], p[4], p[5]))
+    for p in slab_construction_parameters:
+        slab_construction_activities.append((p[0], p[0], p[3], p[4], p[5]))
     # fill the activity dictionaries for walls
     for id, values in wall_dict.items():
         weight = 0
@@ -138,6 +146,46 @@ def RunCommand( is_interactive ):
                         activities[act[1]] += values[act[4]] * values[act[0]]
                     else:
                         activities[act[1]] = values[act[4]] * values[act[0]]
+    # fill the activity dictionaries for slabs
+    for id, values in slab_dict.items():
+        weight = 0
+        if "Unit weight" in values and "Volume" in values:
+            weight = values["Unit weight"] * values["Volume"]
+        for act in slab_demolition_activities:
+            if act[0] in values:
+                activities["Demolizioni"] = True
+                # [3] selects style mode, [4] selects parameter
+                if act[3]:
+                    if values["Style"] in slab_demolition:
+                        slab_demolition[values["Style"]] += values[act[4]]
+                    else:
+                        slab_demolition[values["Style"]] = values[act[4]]
+                else:
+                    if act[1] in activities:
+                        activities[act[1]] += values[act[4]] * values[act[0]]
+                    else:
+                        activities[act[1]] = values[act[4]] * values[act[0]]
+        for act in transportation_activities:
+            if act[0] in values:
+                activities["Trasporti"] = True
+                if act[1] in activities:
+                    activities[act[1]] += weight
+                else:
+                    activities[act[1]] = weight
+        for act in slab_construction_activities:
+            if act[0] in values:
+                activities["Ricostruzioni"] = True
+                # [3] selects style mode, [4] selects parameter
+                if act[3]:
+                    if values["Style"] in slab_construction:
+                        slab_construction[values["Style"]] += values[act[4]]
+                    else:
+                        slab_construction[values["Style"]] = values[act[4]]
+                else:
+                    if act[1] in activities:
+                        activities[act[1]] += values[act[4]] * values[act[0]]
+                    else:
+                        activities[act[1]] = values[act[4]] * values[act[0]]
     #Get the filename to create
     filename = rs.SaveFileName("Save Bill of Quantities file as", filter)
     if( filename==None ): return
@@ -153,6 +201,13 @@ def RunCommand( is_interactive ):
         for act in wall_demolition_activities:
             if act[1] in activities:
                 csvwriter.writerow(["", act[2], "mq", activities[act[1]]])
+        if slab_demolition:
+            csvwriter.writerow(["", "Demolizioni pavimenti"])
+        for slab, area in slab_demolition.items():
+            csvwriter.writerow(["", slab, "mq", area])
+        for act in slab_demolition_activities:
+            if act[1] in activities:
+                csvwriter.writerow(["", act[2], "mq", activities[act[1]]])
         if "Trasporti" in activities:
             csvwriter.writerow(["", "Trasporti"])
         for act in transportation_activities:
@@ -165,6 +220,13 @@ def RunCommand( is_interactive ):
         for wall, area in wall_construction.items():
             csvwriter.writerow(["", wall, "mq", area])
         for act in wall_construction_activities:
+            if act[1] in activities:
+                csvwriter.writerow(["", act[2], "mq", activities[act[1]]])
+        if slab_construction:
+            csvwriter.writerow(["", "Pavimentazioni"])
+        for slab, area in slab_construction.items():
+            csvwriter.writerow(["", slab, "mq", area])
+        for act in slab_construction_activities:
             if act[1] in activities:
                 csvwriter.writerow(["", act[2], "mq", activities[act[1]]])
         print("Bill of Quantities written sucessfully to file")
