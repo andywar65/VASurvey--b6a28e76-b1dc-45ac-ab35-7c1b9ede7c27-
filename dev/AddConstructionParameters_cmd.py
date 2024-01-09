@@ -31,6 +31,16 @@ wall_construction_parameters = [
     ["070-Rivestimento", va.ParameterType.Percentage, "Ricostruzioni", "Rivestimento murario", False, "Area"],
     ["080-Battiscopa", va.ParameterType.Percentage, "Ricostruzioni", "Posa del battiscopa", False, "Length"],
 ]
+slab_demolition_parameters = [
+    ["010-Rimozione pavimento", va.ParameterType.Boolean, "Demolizioni", "Rimozione della pavimentazione", True, "Area"],
+    ["020-Demolizione massetto", va.ParameterType.Boolean, "Demolizioni", "Demolizione del massetto fino a 6 cm", False, "Area"],
+]
+slab_construction_parameters = [
+    ["010-Massetto", va.ParameterType.Boolean, "Ricostruzioni", "Massetto sabbia e cemento", False, "Area"],
+    ["020-Massetto premiscelato", va.ParameterType.Boolean, "Ricostruzioni", "Massetto premiscelato", False, "Area"],
+    ["030-Autolivellante", va.ParameterType.Boolean, "Ricostruzioni", "Autolivellante", False, "Area"],
+    ["040-Pavimentazione", va.ParameterType.Boolean, "Ricostruzioni", "Posa della pavimentazione", True, "Area"],
+]
 
 # RunCommand is the called when the user enters the command name in Rhino.
 # The command name is defined by the filname minus "_cmd.py"
@@ -45,6 +55,16 @@ def RunCommand( is_interactive ):
             va.AddObjectParameter( w_style, p[0], p[1], p[2], p[3])
         for p in wall_construction_parameters:
             va.AddObjectParameter( w_style, p[0], p[1], p[2], p[3])
+    slab_styles = va.GetAllSlabStyleIds()
+    for s_style in slab_styles:
+        for p in physical_parameters:
+            va.AddObjectParameter( s_style, p[0], p[1], p[2], p[3])
+        for p in slab_demolition_parameters:
+            va.AddObjectParameter( s_style, p[0], p[1], p[2], p[3])
+        for p in transportation_parameters:
+            va.AddObjectParameter( s_style, p[0], p[1], p[2], p[3])
+        for p in slab_construction_parameters:
+            va.AddObjectParameter( s_style, p[0], p[1], p[2], p[3])
     return 0
     
 if __name__ == "__main__":
