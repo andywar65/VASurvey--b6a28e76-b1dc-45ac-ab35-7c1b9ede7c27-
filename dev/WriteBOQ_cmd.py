@@ -9,6 +9,8 @@ from AddConstructionParameters_cmd import (
     wall_demolition_parameters,
     transportation_parameters,
     wall_construction_parameters,
+    slab_demolition_parameters,
+    slab_construction_parameters,
 )
 
 __commandname__ = "WriteBOQ"
