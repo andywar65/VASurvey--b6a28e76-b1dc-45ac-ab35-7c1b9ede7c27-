@@ -52,7 +52,37 @@ def RunCommand( is_interactive ):
                 type = va.GetParameterType(param_id)
                 if value:
                     wall_dict[str(obj.Id)][param[0]] = value
-    print(wall_dict)
+    #prompt the user for the Slab csv to import
+    filename = rs.OpenFileName("Open Slab Table File", filter)
+    if not filename: return
+    # extract a slab list with clean values
+    with open(filename) as csvfile:
+        slab_dict = {}
+        original = csv.DictReader(csvfile)
+        for row in original:
+            slab_dict[row["\xef\xbb\xbfDescription"]]={
+                "Style": row["Style"],
+                "Area": float(row["Area"].split(" ")[0]),
+                "Volume": float(row["Volume"].split(" ")[0]),
+            }
+    csvfile.close()
+    slab_params = (
+        physical_parameters + 
+        slab_demolition_parameters +
+        transportation_parameters +
+        slab_construction_parameters
+    )
+    for obj in objects:
+        # filter slabs
+        if obj.IsNormal and va.IsSlab(obj.Id):
+            # add parameters to wall dictionary
+            for param in slab_params:
+                param_id = va.GetObjectParameterId(param[0], obj.Id,1)
+                value = va.GetParameterValue(param_id, obj.Id)
+                type = va.GetParameterType(param_id)
+                if value:
+                    wall_dict[str(obj.Id)][param[0]] = value
+    print(wall_dict, slab_dict)
     # write BOQ dictionary
     # activity dictionaries
     activities = {}
