@@ -11,6 +11,8 @@ from AddConstructionParameters_cmd import (
     wall_construction_parameters,
     slab_demolition_parameters,
     slab_construction_parameters,
+    finish_demolition_parameters,
+    finish_construction_parameters,
 )
 
 __commandname__ = "WriteBOQ"
@@ -38,7 +40,9 @@ def RunCommand( is_interactive ):
         physical_parameters + 
         wall_demolition_parameters +
         transportation_parameters +
-        wall_construction_parameters
+        wall_construction_parameters +
+        finish_demolition_parameters +
+        finish_construction_parameters
     )
     # get all objects in file
     objects = Rhino.RhinoDoc.ActiveDoc.Objects
@@ -70,7 +74,9 @@ def RunCommand( is_interactive ):
         physical_parameters + 
         slab_demolition_parameters +
         transportation_parameters +
-        slab_construction_parameters
+        slab_construction_parameters +
+        finish_demolition_parameters +
+        finish_construction_parameters
     )
     for obj in objects:
         # filter slabs
@@ -81,7 +87,7 @@ def RunCommand( is_interactive ):
                 value = va.GetParameterValue(param_id, obj.Id)
                 type = va.GetParameterType(param_id)
                 if value:
-                    wall_dict[str(obj.Id)][param[0]] = value
+                    slab_dict[str(obj.Id)][param[0]] = value
     print(wall_dict, slab_dict)
     # write BOQ dictionary
     # activity dictionaries
@@ -105,6 +111,12 @@ def RunCommand( is_interactive ):
     for p in slab_demolition_parameters:
         slab_demolition_activities.append((p[0], p[0], p[3], p[4], p[5]))
     for p in slab_construction_parameters:
+        slab_construction_activities.append((p[0], p[0], p[3], p[4], p[5]))
+    for p in finish_demolition_parameters:
+        wall_demolition_activities.append((p[0], p[0], p[3], p[4], p[5]))
+        slab_demolition_activities.append((p[0], p[0], p[3], p[4], p[5]))
+    for p in finish_construction_parameters:
+        wall_construction_activities.append((p[0], p[0], p[3], p[4], p[5]))
         slab_construction_activities.append((p[0], p[0], p[3], p[4], p[5]))
     # fill the activity dictionaries for walls
     for id, values in wall_dict.items():
@@ -202,7 +214,7 @@ def RunCommand( is_interactive ):
             if act[1] in activities:
                 csvwriter.writerow(["", act[2], "mq", activities[act[1]]])
         if slab_demolition:
-            csvwriter.writerow(["", "Demolizioni pavimenti"])
+            csvwriter.writerow(["", "Demolizioni solai"])
         for slab, area in slab_demolition.items():
             csvwriter.writerow(["", slab, "mq", area])
         for act in slab_demolition_activities:
@@ -223,7 +235,7 @@ def RunCommand( is_interactive ):
             if act[1] in activities:
                 csvwriter.writerow(["", act[2], "mq", activities[act[1]]])
         if slab_construction:
-            csvwriter.writerow(["", "Pavimentazioni"])
+            csvwriter.writerow(["", "Ricostruzioni solai"])
         for slab, area in slab_construction.items():
             csvwriter.writerow(["", slab, "mq", area])
         for act in slab_construction_activities:
